@@ -1,7 +1,7 @@
-fileloc='C:\Users\Paul\Desktop\Pegasus_diffraction_simulation_7_18_2023\';
+fileloc='E:\PEGASUS_UED_MATLAB\';
 sample_screen_gdf=gdffile;
 
-particles=load_gdf('C:\Users\Paul\Desktop\Pegasus_diffraction_simulation_7_18_2023\injection_solution.gdf') ;
+particles=load_gdf('E:\PEGASUS_UED_MATLAB\injection_solution.gdf') ;
 
 particles1=particles(end);
 Npar=length(particles1.d.q);

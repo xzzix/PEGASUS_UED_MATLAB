@@ -2,12 +2,15 @@ clear all
 close all
 
 path_to_gpt='"C:\Program Files\General Particle Tracer\bin\"';
-path_to_in_out_file=' C:\Users\Paul\Desktop\Pegasus_diffraction_simulation_7_18_2023\' ;
+path_to_in_out_file=' E:\PEGASUS_UED_MATLAB\' ;
 license=' GPTlicense=1476385047';
 
 
 %% Injector to sample GPT simulation
 %injector parameteres
+Gg0=[2.2197    3.6599    1.4900]; % guess gradient green quads.
+s0=[0.0118    0.0218    0.0380]; %initial guess for PMQ peak field positions
+
 E0 = 0.4;
 nps = 20000;
 sigmaX = 150e-6;
@@ -62,7 +65,7 @@ callGPT2=strcat(path_to_gpt,'gdfa -o',path_to_in_out_file,statsfile2,path_to_in_
 system(callGPT2,'-echo') ;
 
 %% Show diffraction pattern at pimax screen
-data=load_gdf('C:\Users\Paul\Desktop\Pegasus_diffraction_simulation_7_18_2023\diffraction_GPT_solution.gdf') ;
+data=load_gdf('E:\PEGASUS_UED_MATLAB\diffraction_GPT_solution.gdf') ;
 % convert to reciprocal space
 Rdiff=Mf(:,:,end);
 hbar=1.05e-34;

@@ -100,9 +100,9 @@ if(!defined(Gb1)) Gb1=I1*0.4;
 if(!defined(Gb2)) Gb2=I2*0.48;
 if(!defined(Gb3)) Gb3=I3*0.48;
 
-quad_fringe( "wcs","z", skewpos1, ethickness, Gb1,b);
-quad_fringe( "wcs","z", skewpos2, ethickness, -Gb2,b);
-quad_fringe( "wcs","z", skewpos2, ethickness, Gb3,b);
+quadrupole( "wcs","z", skewpos1, ethickness, Gb1,b);
+quadrupole( "wcs","z", skewpos2, ethickness, -Gb2,b);
+quadrupole( "wcs","z", skewpos2, ethickness, Gb3,b);
 
 
 #ns = 1e-9 ;
