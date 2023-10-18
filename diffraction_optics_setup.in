@@ -1,0 +1,46 @@
+accuracy(7,7);
+#space charge
+setfile("beam","C:\Users\Paul\Desktop\Pegasus_diffraction_simulation_7_18_2023\matlabOut.gdf");
+spacecharge3Dmesh() ;
+if(!defined(screen4)) screen4=3.191;
+
+
+#green quad params
+if(!defined(effl)) effl=0.0768;
+if(!defined(delta)) delta = 0.085;
+if(!defined(b)) b = 135;
+
+
+#Green triplet
+quad_fringe( "wcs","z", sg1+screen4, effl, Gg1,b);
+quad_fringe( "wcs","z", sg2+screen4, effl, -Gg2,b);
+quad_fringe( "wcs","z", sg3+screen4, effl, Gg3,b);
+
+
+#permanent quad gradient fit
+if(!defined(G1)) G1=653.7301;
+if(!defined(G2)) G2=653.7301;
+if(!defined(G3)) G3=664.1826;
+
+
+#permanent quad effective length
+if(!defined(l1)) l1=6.0e-03;
+if(!defined(l2)) l2=6.0e-03;
+if(!defined(l3)) l3=3.0e-03;
+
+
+#permanent quad field fringe factor
+if(!defined(b1)) b1=1675.493408057606;
+if(!defined(b2)) b2=1675.493408057606;
+if(!defined(b3)) b3=1639.343181086262;
+
+
+#PMQ triplet
+quad_fringe( "wcs","z", d1+Lg+screen4, l1, G1,b1);
+quad_fringe( "wcs","z", d2+Lg+screen4, l2, -G2,b2);
+quad_fringe( "wcs","z", d3+Lg+screen4, l3, G3,b3);
+
+dtmin=1e-12;
+dtmaxt(3.2e-9,3.7e-9,1.0e-12);
+if(!defined(Ltot)) Ltot=1.8;
+screen( "wcs","I", screen4,screen4+Ltot,0.001 ) ;

@@ -1,0 +1,111 @@
+GPTLICENSE = 1476385047;
+
+accuracy(6,7); 
+if(!defined(E0)) E0 = 0.4; #MTE = 2*E0 [eV]
+nps = 20000;
+if(!defined(sigmaX)) sigmaX = 150e-6;
+if(!defined(sigmaY)) sigmaY = 150e-6;
+if(!defined(sigmaT)) sigmaT = 100e-15;
+if(!defined(qTotal)) qTotal = -500e-15;
+if(!defined(gunLoopmV)) gunLoopmV = 43;
+if(!defined(gunPhaseDeg)) gunPhaseDeg = 25;
+if(!defined(solFac1)) solFac1 = 1.01;
+zshift=0;
+shiftx=0;
+shifty=0;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ;
+
+if(!defined(XPhaseDeg)) XPhaseDeg=21.11;
+if(!defined(XFieldScaleFac)) XFieldScaleFac=1.01*0;
+
+if(!defined(linacPhaseDeg)) linacPhaseDeg=218;
+if(!defined(linacFieldScaleFac)) linacFieldScaleFac=18.75e+6;
+
+############################# Beam Initialization #######################################
+  if(!defined(E0)) E0 = 0.4; #MTE = 2*E0 [eV]
+  G = 1-q*E0/(m*c*c); 
+  GB = sqrt(G^2-1);
+  setparticles("beam",nps,me,qe,qTotal);
+  rc=2.4*10^(-12);
+  setrmacrodist("beam","u",rc,0) ;
+# -- Initial Distributions --
+
+
+  setrxydist("beam","S",0,sigmaX);       
+  setphidist("beam","u",0,2*pi) ;
+  settdist("beam", "Q", 0, 2*sqrt(5)*sigmaT) ;
+  setGBzdist("beam","g",0,GB,0,3);         # Yields MTE = 2*E0 [eV]
+  setGBxdist("beam","g",0,GB,3,3);
+  setGBydist("beam","g",0,GB,3,3);
+
+
+gunFreq = 2.856e9;#Hz
+sOmega = 2*pi*gunFreq;
+GunPowerField =  0.25102 +10.5102*sqrt(GunLoopmV) ;
+GunPowerFac = -GunPowerField*1e+6;
+GunPhaseRad = (90+GunPhaseDeg)/180*pi;
+
+# --Gun Field Map--
+spacecharge3Dmesh("Cathode");  
+map1D_TM("wcs","z",0,"Italiangun_1D_flat_cathode.gdf","Z","EZ",GunPowerFac,GunPhaseRad,sOmega);
+
+# --Focusing Solenoid--
+  R=0.0253043;
+  L=-0.0953763; 
+  o=0.286;#0.04+.25-0.0005;
+  bzsolenoid("wcs","z",o,R,L,sqrt(L*L+4*R*R)/L/mu0*(solFac1*0.14585+0.00945));
+
+# --X-band 'Linearizer'--
+   XFreq = 9.6e9; #Hz
+   XOmega = 2*pi*XFreq;
+   XPhaseRad=XPhaseDeg/180*pi;
+   XCavLength=0.109;
+   XCavCenter=1.087; #old position
+   XCavBeg=XCavCenter-(XCavLength/2);
+   XCavEnd=XCavCenter+(XCavLength/2);
+
+# X-Band Cavity Ez(z) Field Map
+   map1D_TM("wcs","z",XCavCenter-zshift,"Xband_cavity1D.gdf","z","Ez",XFieldScaleFac,XPhaseRad,XOmega);
+
+# --S-band 'Linac' parameters--
+  gunFreq = 2.856e9;#Hz
+  sOmega = 2*pi*gunFreq;
+  linacPhaseRad=linacPhaseDeg/180*pi;
+  linacBeg = 1.45-0.317782;           #beginning of field map
+  linacEnd = 1.45+0.317756;           #end of field map
+
+# --Linac 1D Field Map--
+  map1D_TM("wcs","z", 1.72-zshift, "ftlinac.gdf","z","Ez",linacFieldScaleFac,linacPhaseRad,sOmega);
+
+
+
+#Blue triplet
+
+b=100;
+ethickness = 0.105;
+thickness = 0.085725;
+
+drift12 = 0.112;
+drift23 = 0.151;
+
+skewpos1= 2.793+thickness/2;
+skewpos2 = skewpos1 + drift12;
+skewpos3 = skewpos2 + drift23;
+
+if(!defined(I1)) I1=2.35*0;
+if(!defined(I2)) I2=3.2*0;
+if(!defined(I3)) I3=1.4*0;
+
+
+if(!defined(Gb1)) Gb1=I1*0.4;
+if(!defined(Gb2)) Gb2=I2*0.48;
+if(!defined(Gb3)) Gb3=I3*0.48;
+
+quad_fringe( "wcs","z", skewpos1, ethickness, Gb1,b);
+quad_fringe( "wcs","z", skewpos2, ethickness, -Gb2,b);
+quad_fringe( "wcs","z", skewpos2, ethickness, Gb3,b);
+
+
+#ns = 1e-9 ;
+#tout( 0,10*ns,0.05*ns );
+tout(0,1.075e-8,0.25e-10);
+screen("wcs","I", 3.191) ;
